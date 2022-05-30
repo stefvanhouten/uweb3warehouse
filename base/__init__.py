@@ -4,6 +4,10 @@ import os
 # Third-party modules
 import uweb3
 
+from base.login.urls import urls as login_urls
+from base.products.urls import urls as product_urls
+from base.suppliers.urls import urls as supplier_urls
+
 # Application
 from . import basepages
 
@@ -20,39 +24,15 @@ def main():
     """
     return uweb3.uWeb(
         basepages.PageMaker,
-        [
-            ("/", "RequestProductNew", "POST"),
+        supplier_urls
+        + product_urls
+        + login_urls
+        + [
             ("/", "RequestIndex"),
-            # login / user management
-            ("/login", "HandleLogin", "POST"),
-            ("/login", "RequestLogin"),
-            ("/logout", "RequestLogout"),
-            ("/usersettings", "RequestUserSettings"),
-            ("/apisettings", "RequestApiSettings"),
-            ("/resetpassword", "RequestResetPassword"),
-            ("/resetpassword/([^/]*)/(.*)", "RequestResetPassword"),
             ("/setup", "RequestSetup"),
             ("/admin", "RequestAdmin"),
             ("/gs1", "RequestGS1"),
             ("/ean", "RequestEAN"),
-            ("/suppliers", "RequestSupplierNew", "POST"),
-            ("/supplier/updatestock/([^/]*)", "UpdateSupplierStock", "POST"),
-            ("/suppliers", "RequestSuppliers"),
-            ("/supplier/([^/]*)", "RequestSupplierSave", "POST"),
-            ("/supplier/([^/]*)", "RequestSupplier", "GET"),
-            ("/supplier/([^/]*)/remove", "RequestSupplierRemove", "POST"),
-            ("/product/([^/]*)", "RequestProductSave", "POST"),
-            ("/product/([^/]*)", "RequestProduct", "GET"),
-            ("/product/([^/]*)/remove", "RequestProductRemove", "POST"),
-            ("/product/([^/]*)/assemble", "RequestProductAssemble", "POST"),
-            ("/product/([^/]*)/assembly", "RequestProductAssemblySave", "POST"),
-            ("/product/([^/]*)/stock", "RequestProductStock", "POST"),
-            # API
-            ("/api/v1/product/([^/]*)", "JsonProduct", "GET"),
-            ("/api/v1/products", "JsonProducts", "GET"),
-            ("/api/v1/search_product/([^/]*)", "JsonProductSearch"),
-            ("/api/v1/product/([^/]*)/stock", "JsonProductStock", "POST"),
-            ("/api/v1/products/bulk_stock", "JsonProductStockBulk", "POST"),
             # Helper files
             ("(/styles/.*)", "Static"),
             ("(/js/.*)", "Static"),
