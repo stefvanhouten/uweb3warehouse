@@ -1,6 +1,7 @@
 #!/usr/bin/python
 """Request handlers for the uWeb3 warehouse inventory software"""
 
+import os
 import urllib.parse
 
 import uweb3
@@ -19,6 +20,9 @@ from warehouse.suppliers import model as supplier_model
 
 
 class PageMaker(basepages.PageMaker):
+
+    TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
+
     @uweb3.decorators.loggedin
     @uweb3.decorators.TemplateParser("products.html")
     def RequestProducts(self):
