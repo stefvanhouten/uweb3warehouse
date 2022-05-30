@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 import uweb3
 
-from base.model import basemodel
+from base.login import model
 
 
 def NotExistsErrorCatcher(f):
@@ -33,7 +33,7 @@ def apiuser(f):
         elif "apikey" in args[0].req.headers:
             key = args[0].req.headers.get("apikey")
         try:
-            args[0].apikey = basemodel.Apiuser.FromKey(args[0].connection, key)
+            args[0].apikey = model.Apiuser.FromKey(args[0].connection, key)
         except uweb3.model.NotExistError as apierror:
             return uweb3.Response(content={"error": str(apierror)}, httpcode=403)
         return f(*args, **kwargs)

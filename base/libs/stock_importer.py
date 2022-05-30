@@ -1,11 +1,9 @@
 import difflib
 from collections import namedtuple
-from dataclasses import dataclass
-from fileinput import close
 
 import pandas
 
-from base import model
+from base.products import model as product_model
 
 
 class StockParser:
@@ -156,7 +154,7 @@ class StockImporter:
         Returns:
             model.Stock: The added Stock record.
         """
-        return model.Stock.Create(
+        return product_model.Stock.Create(
             self.connection,
             {
                 "product": product.key,
