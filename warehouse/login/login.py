@@ -1,3 +1,5 @@
+import os
+
 import uweb3
 from uweb3.libs import mail
 
@@ -6,6 +8,8 @@ from warehouse.login import model
 
 
 class PageMaker(basepages.PageMaker):
+    TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
+
     @uweb3.decorators.checkxsrf
     @uweb3.decorators.TemplateParser("logout.html")
     def RequestLogout(self):
