@@ -13,32 +13,7 @@ from passlib.hash import pbkdf2_sha256
 # Custom modules
 from uweb3 import model
 
-__all__ = [
-    "NOTDELETEDDATE",
-    "NOTDELETED",
-    "InvalidNameError",
-    "WarehouseException",
-    "AssemblyError",
-    "User",
-    "Session",
-    "Apiuser",
-]
-
-NOTDELETEDDATE = "1000-01-01 00:00:00"
-NOTDELETED = 'dateDeleted = "%s"' % NOTDELETEDDATE
-
-
-class InvalidNameError(Exception):
-    """Invalid name value."""
-
-
-class WarehouseException(Exception):
-    """A general Catch all error for the warehouse software"""
-
-
-class AssemblyError(WarehouseException):
-    """The requested operation cannot continue because we could not assemble a
-    product as requested."""
+from base.common import model as common_model
 
 
 class User(model.Record):
@@ -167,7 +142,7 @@ class Apiuser(model.Record):
             "([\w\-_\.,]+)", self["name"].replace(" ", "_")
         ).groups()[0][:45]
         if not self["name"]:
-            raise InvalidNameError("Provide a valid name")
+            raise common_model.InvalidNameError("Provide a valid name")
 
     def _PreSave(self, cursor):
         super()._PreSave(cursor)
@@ -177,7 +152,7 @@ class Apiuser(model.Record):
         ).groups()[0][:45]
         self["active"] = "true" if self["active"] == "true" else "false"
         if not self["name"]:
-            raise InvalidNameError("Provide a valid name")
+            raise common_model.InvalidNameError("Provide a valid name")
 
     @classmethod
     def FromKey(cls, connection, key):
