@@ -1,3 +1,4 @@
+import os
 from io import StringIO
 
 import uweb3
@@ -12,6 +13,8 @@ from warehouse.suppliers import model
 
 
 class PageMaker(basepages.PageMaker):
+    TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
+
     @uweb3.decorators.loggedin
     @uweb3.decorators.TemplateParser("suppliers.html")
     def RequestSuppliers(self, error=None, success=None):
