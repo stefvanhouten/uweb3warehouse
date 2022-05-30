@@ -3,10 +3,10 @@ from io import StringIO
 import uweb3
 
 from base import basepages
+from base.common import model as common_model
 from base.common.decorators import NotExistsErrorCatcher
 from base.common.helpers import PagedResult
 from base.libs import stock_importer
-from base.login import model as login_model
 from base.products import model as product_model
 from base.suppliers import model
 
@@ -97,7 +97,7 @@ class PageMaker(basepages.PageMaker):
             return self.RequestInvalidcommand(
                 error="Input error, some fields are wrong."
             )
-        except login_model.InvalidNameError:
+        except common_model.InvalidNameError:
             return self.RequestInvalidcommand(
                 error="Please enter a valid name for the supplier."
             )

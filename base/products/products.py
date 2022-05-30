@@ -6,6 +6,7 @@ import urllib.parse
 import uweb3
 
 from base import basepages
+from base.common import model as common_model
 from base.common.decorators import NotExistsErrorCatcher, apiuser, json_error_wrapper
 from base.common.helpers import PagedResult
 from base.login import model as login_model
@@ -177,7 +178,7 @@ class PageMaker(basepages.PageMaker):
             return self.RequestInvalidcommand(
                 error="Input error, some fields are wrong."
             )
-        except login_model.InvalidNameError:
+        except common_model.InvalidNameError:
             return self.RequestInvalidcommand(
                 error="Please enter a valid name for the product."
             )
@@ -277,7 +278,7 @@ class PageMaker(basepages.PageMaker):
                         "lot": self.post.getfirst("lot", ""),
                     },
                 )
-        except login_model.AssemblyError as error:
+        except common_model.AssemblyError as error:
             return self.Error(error)
         return self.req.Redirect("/product/%s" % product["name"], httpcode=301)
 
@@ -303,7 +304,7 @@ class PageMaker(basepages.PageMaker):
                     if "reference" in self.post
                     else None,
                 )
-            except login_model.AssemblyError as error:
+            except common_model.AssemblyError as error:
                 raise ValueError(error.args[0])
 
         # by now we should have enough products in stock, one way or another
@@ -348,7 +349,7 @@ class PageMaker(basepages.PageMaker):
                     - currentstock,  # only assemble what is missing for this sale
                     "Assembly for %s" % reference,
                 )
-            except login_model.AssemblyError as error:
+            except common_model.AssemblyError as error:
                 raise ValueError(error.args[0])
 
         model.Stock.Create(

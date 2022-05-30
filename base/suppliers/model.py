@@ -13,6 +13,7 @@ import pytz
 # Custom modules
 from uweb3 import model
 
+from base.common import model as common_model
 from base.login import model as login_model
 
 
@@ -24,7 +25,7 @@ class Supplier(model.Record):
         """Returns the Suppliers filterd on not deleted"""
         return super().List(
             connection,
-            conditions=[login_model.NOTDELETED] + conditions,
+            conditions=[common_model.NOTDELETED] + conditions,
             *args,
             **kwargs
         )
@@ -70,7 +71,8 @@ class Supplier(model.Record):
         with connection as cursor:
             supplier = cursor.Select(
                 table=cls.TableName(),
-                conditions=["name=%s" % safe_name, login_model.NOTDELETED] + conditions,
+                conditions=["name=%s" % safe_name, common_model.NOTDELETED]
+                + conditions,
             )
         if not supplier:
             raise cls.NotExistError("There is no supplier with common name %r" % name)
@@ -94,7 +96,7 @@ class Supplier(model.Record):
                 "([\w\-_\.,]+)", self["name"].replace(" ", "_")
             ).groups()[0][:45]
         if not self["name"]:
-            raise login_model.InvalidNameError("Provide a valid name")
+            raise common_model.InvalidNameError("Provide a valid name")
 
     def _PreSave(self, cursor):
         super()._PreSave(cursor)
@@ -105,4 +107,4 @@ class Supplier(model.Record):
                 "([\w\-_\.,]+)", self["name"].replace(" ", "_")
             ).groups()[0][:45]
         if not self["name"]:
-            raise login_model.InvalidNameError("Provide a valid name")
+            raise common_model.InvalidNameError("Provide a valid name")

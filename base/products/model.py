@@ -11,6 +11,7 @@ import math
 import pytz
 from uweb3 import model
 
+from base.common import model as common_model
 from base.login import model as login_model
 
 
@@ -26,7 +27,7 @@ class Product(model.Record):
         """Returns the Products filtered on not deleted"""
         return super().List(
             connection,
-            conditions=[login_model.NOTDELETED] + conditions,
+            conditions=[common_model.NOTDELETED] + conditions,
             *args,
             **kwargs
         )
@@ -77,7 +78,8 @@ class Product(model.Record):
         with connection as cursor:
             product = cursor.Select(
                 table=cls.TableName(),
-                conditions=["name=%s" % safe_name, login_model.NOTDELETED] + conditions,
+                conditions=["name=%s" % safe_name, common_model.NOTDELETED]
+                + conditions,
             )
         if not product:
             raise cls.NotExistError("There is no product with common name %r" % name)
@@ -100,7 +102,7 @@ class Product(model.Record):
         if not self["sku"]:  # set empty string to None for key contraints
             self["sku"] = None
         if not self["name"]:
-            raise login_model.InvalidNameError("Provide a valid name")
+            raise common_model.InvalidNameError("Provide a valid name")
 
     def _PreSave(self, cursor):
         super()._PreSave(cursor)
@@ -114,7 +116,7 @@ class Product(model.Record):
         if not self["sku"]:  # set empty string to None for key contraints
             self["sku"] = None
         if not self["name"]:
-            raise login_model.InvalidNameError("Provide a valid name")
+            raise common_model.InvalidNameError("Provide a valid name")
 
     @property
     def parts(self):
@@ -191,23 +193,23 @@ class Product(model.Record):
         if amount > 0:
             possiblestock = self.possiblestock
             if not possiblestock["available"] and not possiblestock["limitedby"]:
-                raise login_model.AssemblyError(
+                raise common_model.AssemblyError(
                     "Cannot assemble this product, is not an assembled product."
                 )
             if not possiblestock["available"] or possiblestock["available"] < amount:
-                raise login_model.AssemblyError(
+                raise common_model.AssemblyError(
                     "Cannot assemble this product, not enough parts. Limited by: %s"
                     % possiblestock["limitedby"]["part"]["name"]
                 )
             parts = possiblestock["parts"]
         elif amount < 0:
             if self.currentstock < abs(amount):
-                raise login_model.AssemblyError(
+                raise common_model.AssemblyError(
                     "Cannot Disassemble this product, not enough stock available."
                 )
             parts = list(self.parts)
             if parts == 0:
-                raise login_model.AssemblyError(
+                raise common_model.AssemblyError(
                     "Cannot Disassemble this product, is not an assembled product."
                 )
         return parts

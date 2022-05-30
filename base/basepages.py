@@ -10,6 +10,7 @@ import time
 import uweb3
 from uweb3.libs import mail
 
+from base.common import model as common_model
 from base.login import model as login_model
 
 # project modules
@@ -197,7 +198,7 @@ class PageMaker(
                         "users": users,
                     }
                 users.append(newuser)
-            except login_model.InvalidNameError:
+            except common_model.InvalidNameError:
                 return {
                     "usererror": "Provide a valid email address for the new user.",
                     "users": users,
@@ -327,7 +328,7 @@ class PageMaker(
                     self.connection, {"name": self.post.getfirst("new_name")}
                 )
                 keys.append(newkey)
-            except login_model.InvalidNameError:
+            except common_model.InvalidNameError:
                 return {
                     "keys": keys,
                     "apierror": "Provide a valid name for the new API key.",
