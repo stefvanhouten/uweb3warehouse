@@ -15,7 +15,7 @@ from base.login import model as login_model
 # project modules
 from base.products import model as product_model
 
-from .helpers import PagedResult
+from .common.helpers import PagedResult
 
 
 def CentRound(monies):

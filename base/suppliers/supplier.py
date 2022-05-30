@@ -3,8 +3,8 @@ from io import StringIO
 import uweb3
 
 from base import basepages
-from base.decorators import NotExistsErrorCatcher
-from base.helpers import PagedResult
+from base.common.decorators import NotExistsErrorCatcher
+from base.common.helpers import PagedResult
 from base.libs import stock_importer
 from base.login import model as login_model
 from base.products import model as product_model

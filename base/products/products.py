@@ -6,8 +6,8 @@ import urllib.parse
 import uweb3
 
 from base import basepages
-from base.decorators import NotExistsErrorCatcher, apiuser, json_error_wrapper
-from base.helpers import PagedResult
+from base.common.decorators import NotExistsErrorCatcher, apiuser, json_error_wrapper
+from base.common.helpers import PagedResult
 from base.login import model as login_model
 from base.products import model
 from base.suppliers import model as supplier_model
