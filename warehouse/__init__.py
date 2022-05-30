@@ -31,8 +31,6 @@ def main():
             ("/", "RequestIndex"),
             ("/setup", "RequestSetup"),
             ("/admin", "RequestAdmin"),
-            ("/gs1", "RequestGS1"),
-            ("/ean", "RequestEAN"),
             # Helper files
             ("(/styles/.*)", "Static"),
             ("(/js/.*)", "Static"),

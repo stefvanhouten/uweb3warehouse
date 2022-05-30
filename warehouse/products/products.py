@@ -369,3 +369,32 @@ class PageMaker(basepages.PageMaker):
             },
         )
         return {"stock": product.currentstock, "possible_stock": product.possiblestock}
+
+    @uweb3.decorators.loggedin
+    @uweb3.decorators.TemplateParser("gs1.html")
+    def RequestGS1(self):
+        """Returns the gs1 page"""
+        products = PagedResult(
+            self.pagesize,
+            self.get.getfirst("page", 1),
+            model.Product.List,
+            self.connection,
+            {"conditions": ["gs1 is not null"], "order": [("gs1", False)]},
+        )
+        return {"products": products}
+
+    @uweb3.decorators.loggedin
+    @uweb3.decorators.TemplateParser("ean.html")
+    def RequestEAN(self):
+        """Returns the EAN page"""
+        products = PagedResult(
+            self.pagesize,
+            self.get.getfirst("page", 1),
+            model.Product.List,
+            self.connection,
+            {
+                "conditions": ["(gs1 is not null or ean is not null)"],
+                "order": [("ean", False)],
+            },
+        )
+        return {"products": products}

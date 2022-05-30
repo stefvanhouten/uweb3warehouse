@@ -349,35 +349,6 @@ class PageMaker(
         """Returns the homepage"""
         return self.req.Redirect("/products")
 
-    @uweb3.decorators.loggedin
-    @uweb3.decorators.TemplateParser("gs1.html")
-    def RequestGS1(self):
-        """Returns the gs1 page"""
-        products = PagedResult(
-            self.pagesize,
-            self.get.getfirst("page", 1),
-            product_model.Product.List,
-            self.connection,
-            {"conditions": ["gs1 is not null"], "order": [("gs1", False)]},
-        )
-        return {"products": products}
-
-    @uweb3.decorators.loggedin
-    @uweb3.decorators.TemplateParser("ean.html")
-    def RequestEAN(self):
-        """Returns the EAN page"""
-        products = PagedResult(
-            self.pagesize,
-            self.get.getfirst("page", 1),
-            product_model.Product.List,
-            self.connection,
-            {
-                "conditions": ["(gs1 is not null or ean is not null)"],
-                "order": [("ean", False)],
-            },
-        )
-        return {"products": products}
-
     @uweb3.decorators.checkxsrf
     @uweb3.decorators.TemplateParser("setup.html")
     def RequestSetup(self):

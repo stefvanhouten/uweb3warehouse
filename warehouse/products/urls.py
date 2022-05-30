@@ -5,6 +5,8 @@ urls = [
         "/products",
         (products.PageMaker, "RequestProducts"),
     ),
+    ("/gs1", (products.PageMaker, "RequestGS1")),
+    ("/ean", (products.PageMaker, "RequestEAN")),
     (
         "/product/([^/]*)",
         (products.PageMaker, "RequestProductSave"),
