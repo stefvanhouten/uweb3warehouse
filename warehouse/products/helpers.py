@@ -3,7 +3,7 @@ from collections import namedtuple
 
 import pandas
 
-from base.products import model as product_model
+from warehouse.products import model as product_model
 
 
 class StockParser:

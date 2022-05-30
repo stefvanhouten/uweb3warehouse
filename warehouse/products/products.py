@@ -5,13 +5,17 @@ import urllib.parse
 
 import uweb3
 
-from base import basepages
-from base.common import model as common_model
-from base.common.decorators import NotExistsErrorCatcher, apiuser, json_error_wrapper
-from base.common.helpers import PagedResult
-from base.login import model as login_model
-from base.products import model
-from base.suppliers import model as supplier_model
+from warehouse import basepages
+from warehouse.common import model as common_model
+from warehouse.common.decorators import (
+    NotExistsErrorCatcher,
+    apiuser,
+    json_error_wrapper,
+)
+from warehouse.common.helpers import PagedResult
+from warehouse.login import model as login_model
+from warehouse.products import model
+from warehouse.suppliers import model as supplier_model
 
 
 class PageMaker(basepages.PageMaker):

@@ -10,11 +10,11 @@ import time
 import uweb3
 from uweb3.libs import mail
 
-from base.common import model as common_model
-from base.login import model as login_model
+from warehouse.common import model as common_model
+from warehouse.login import model as login_model
 
 # project modules
-from base.products import model as product_model
+from warehouse.products import model as product_model
 
 from .common.helpers import PagedResult
 

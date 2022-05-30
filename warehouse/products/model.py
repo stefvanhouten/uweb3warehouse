@@ -11,8 +11,8 @@ import math
 import pytz
 from uweb3 import model
 
-from base.common import model as common_model
-from base.login import model as login_model
+from warehouse.common import model as common_model
+from warehouse.login import model as login_model
 
 
 class Product(model.Record):

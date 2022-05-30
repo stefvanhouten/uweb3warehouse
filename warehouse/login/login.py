@@ -1,8 +1,8 @@
 import uweb3
 from uweb3.libs import mail
 
-from base import basepages
-from base.login import model
+from warehouse import basepages
+from warehouse.login import model
 
 
 class PageMaker(basepages.PageMaker):

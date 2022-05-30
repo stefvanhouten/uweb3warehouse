@@ -13,7 +13,7 @@ from passlib.hash import pbkdf2_sha256
 # Custom modules
 from uweb3 import model
 
-from base.common import model as common_model
+from warehouse.common import model as common_model
 
 
 class User(model.Record):

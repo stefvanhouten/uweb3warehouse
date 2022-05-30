@@ -4,9 +4,9 @@ import os
 # Third-party modules
 import uweb3
 
-from base.login.urls import urls as login_urls
-from base.products.urls import urls as product_urls
-from base.suppliers.urls import urls as supplier_urls
+from warehouse.login.urls import urls as login_urls
+from warehouse.products.urls import urls as product_urls
+from warehouse.suppliers.urls import urls as supplier_urls
 
 # Application
 from . import basepages

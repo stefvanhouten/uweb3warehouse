@@ -1,4 +1,4 @@
-from base.login import login
+from warehouse.login import login
 
 urls = [
     ("/login", (login.PageMaker, "HandleLogin"), "POST"),

@@ -4,11 +4,11 @@ Just execute `./serve.py` or `python3 serve.py`
 """
 
 # Application
-import base
+import warehouse
 
 
 def main():
-    app = base.main()
+    app = warehouse.main()
     app.serve()
 
 

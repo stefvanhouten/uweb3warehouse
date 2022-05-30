@@ -1,4 +1,4 @@
-from base.suppliers import supplier
+from warehouse.suppliers import supplier
 
 urls = [
     (

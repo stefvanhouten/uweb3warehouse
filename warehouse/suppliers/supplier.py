@@ -2,13 +2,13 @@ from io import StringIO
 
 import uweb3
 
-from base import basepages
-from base.common import model as common_model
-from base.common.decorators import NotExistsErrorCatcher
-from base.common.helpers import PagedResult
-from base.libs import stock_importer
-from base.products import model as product_model
-from base.suppliers import model
+from warehouse import basepages
+from warehouse.common import model as common_model
+from warehouse.common.decorators import NotExistsErrorCatcher
+from warehouse.common.helpers import PagedResult
+from warehouse.products import helpers
+from warehouse.products import model as product_model
+from warehouse.suppliers import model
 
 
 class PageMaker(basepages.PageMaker):
@@ -131,7 +131,7 @@ class PageMaker(basepages.PageMaker):
         supplier = model.Supplier.FromName(self.connection, supplier)
         file = self.files["fileupload"][0]
 
-        parser = stock_importer.StockParser(
+        parser = helpers.StockParser(
             file_path=StringIO(file["content"]),
             columns=(
                 column_name_mapping,
@@ -151,7 +151,7 @@ class PageMaker(basepages.PageMaker):
             )
         )
 
-        importer = stock_importer.StockImporter(
+        importer = helpers.StockImporter(
             self.connection,
             {
                 "amount": column_stock_mapping,

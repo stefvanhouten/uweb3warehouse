@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 import uweb3
 
-from base.login import model
+from warehouse.login import model
 
 
 def NotExistsErrorCatcher(f):

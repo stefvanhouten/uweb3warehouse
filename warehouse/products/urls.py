@@ -1,4 +1,4 @@
-from base.products import products
+from warehouse.products import products
 
 urls = [
     (
