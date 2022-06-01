@@ -124,16 +124,35 @@ class PageMaker(basepages.PageMaker):
             "resetform.html", resethash=resethash, resetuser=user, message=""
         )
 
-    def _ReadSession(self):
-        """Attempts to read the session for this user from his session cookie"""
-        try:
-            user = model.Session(self.connection)
-        except Exception:
-            raise ValueError("Session cookie invalid")
-        try:
-            user = model.User.FromPrimary(self.connection, int(str(user)))
-        except uweb3.model.NotExistError:
-            return None
-        if user["active"] != "true":
-            raise ValueError("User not active, session invalid")
-        return user
+    @uweb3.decorators.loggedin
+    @uweb3.decorators.checkxsrf
+    @uweb3.decorators.TemplateParser("usersettings.html")
+    def RequestUserSettings(self):
+        """Returns the user settings page."""
+        # handle password change
+        if "password" in self.post or "password_confirm" in self.post:
+            password = self.post.getfirst("password", "")
+            password_confirm = self.post.getfirst("password_confirm", "")
+            if password != password_confirm:
+                return {"error": "Passwords do not match, try again."}
+            try:
+                self.user.UpdatePassword(password)
+            except ValueError:
+                return {"error": "Passwords too short."}
+            else:
+                content = self.parser.Parse(
+                    "email/updateuser.txt", email=self.user["email"]
+                )
+                try:
+                    with mail.MailSender(
+                        local_hostname=self.options["general"]["host"]
+                    ) as send_mail:
+                        send_mail.Text(
+                            self.user["email"], "Warehouse account change", content
+                        )
+                except mail.SMTPConnectError:
+                    if not self.debug:
+                        return self.Error(
+                            "Mail could not be send due to server error, please contact support."
+                        )
+            return {"succes": "Password has been updated."}

@@ -13,11 +13,6 @@ from uweb3.libs import mail
 from warehouse.common import model as common_model
 from warehouse.login import model as login_model
 
-# project modules
-from warehouse.products import model as product_model
-
-from .common.helpers import PagedResult
-
 
 def CentRound(monies):
     """Rounds the given float to two decimals."""
@@ -28,7 +23,6 @@ def CentRound(monies):
 class PageMaker(
     uweb3.DebuggingPageMaker,
     uweb3.LoginMixin,
-    # products.PageMaker, supplier.PageMaker
 ):
     """Holds all the request handlers for the application"""
 
@@ -99,7 +93,7 @@ class PageMaker(
         try:
             user = login_model.User.FromPrimary(self.connection, int(str(user)))
         except uweb3.model.NotExistError:
-            return None
+            raise ValueError("User not valid")
         if user["active"] != "true":
             raise ValueError("User not active, session invalid")
         return user
@@ -227,39 +221,6 @@ class PageMaker(
                         )
             return {"usersucces": "Your new user was added", "users": users}
         return {"users": users}
-
-    @uweb3.decorators.loggedin
-    @uweb3.decorators.checkxsrf
-    @uweb3.decorators.TemplateParser("usersettings.html")
-    def RequestUserSettings(self):
-        """Returns the user settings page."""
-        # handle password change
-        if "password" in self.post or "password_confirm" in self.post:
-            password = self.post.getfirst("password", "")
-            password_confirm = self.post.getfirst("password_confirm", "")
-            if password != password_confirm:
-                return {"error": "Passwords do not match, try again."}
-            try:
-                self.user.UpdatePassword(password)
-            except ValueError:
-                return {"error": "Passwords too short."}
-            else:
-                content = self.parser.Parse(
-                    "email/updateuser.txt", email=self.user["email"]
-                )
-                try:
-                    with mail.MailSender(
-                        local_hostname=self.options["general"]["host"]
-                    ) as send_mail:
-                        send_mail.Text(
-                            self.user["email"], "Warehouse account change", content
-                        )
-                except mail.SMTPConnectError:
-                    if not self.debug:
-                        return self.Error(
-                            "Mail could not be send due to server error, please contact support."
-                        )
-            return {"succes": "Password has been updated."}
 
     @uweb3.decorators.loggedin
     @uweb3.decorators.checkxsrf
