@@ -10,6 +10,11 @@ from warehouse.products import helpers, model
 
 
 class PageMaker(basepages.PageMaker):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.api_user = None
+        self.apikey = None
+
     @uweb3.decorators.ContentType("application/json")
     @json_error_wrapper
     @apiuser
