@@ -14,8 +14,9 @@ class LoginService:
             raise ValueError("Authentication failed")
 
         if not self._user and not self._auth_failed:
+            session = model.Session(self.connection)
+
             try:
-                session = model.Session(self.connection)
                 userID = int(str(session.rawcookie))
             except Exception as ex:
                 self._auth_failed = True
@@ -45,29 +46,6 @@ class LoginServiceBuilder:
         return self._instance
 
 
-class AdminService:
-    def __init__(self, connection, user):
-        self._user = user
-        self._admin = None
-        self.connection = connection
-
-    def authenticate(self):
-        if not self._admin:
-            if self._user["admin"] != "true":
-                raise ValueError("User not admin")
-        return self._admin
-
-
-class AdminServiceBuilder:
-    def __init__(self):
-        self._instance = None
-
-    def __call__(self, connection, user, **ignored):
-        if not self._instance:
-            self._instance = AdminService(connection, user)
-        return self._instance
-
-
 class AuthFactory:
     def __init__(self):
         self._authenticators = {}
@@ -92,5 +70,8 @@ class AuthMixin:
         """Returns the current user"""
         if not self._user:
             authenticator = self.auth_services.get_authenticator("login", connection=self.connection)  # type: ignore
-            self._user = authenticator.authenticate()
+            try:
+                self._user = authenticator.authenticate()
+            except ValueError:
+                self._user = False
         return self._user
