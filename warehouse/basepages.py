@@ -11,6 +11,8 @@ import uweb3
 from uweb3.libs import mail
 
 from warehouse.common import model as common_model
+from warehouse.common.decorators import loggedin
+from warehouse.login import helpers as login_helpers
 from warehouse.login import model as login_model
 
 
@@ -22,14 +24,20 @@ def CentRound(monies):
 
 class PageMaker(
     uweb3.DebuggingPageMaker,
-    uweb3.LoginMixin,
+    login_helpers.AuthMixin,
 ):
     """Holds all the request handlers for the application"""
 
     DEFAULTPAGESIZE = 10
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def _PostInit(self):
         """Sets up all the default vars"""
+        self.auth_services = login_helpers.AuthFactory()
+        self.auth_services.register_auth("login", login_helpers.LoginServiceBuilder())
+
         self.parser.RegisterTag("scripts", None)
         self.parser.RegisterTag("year", time.strftime("%Y"))
         self.parser.RegisterFunction("CentRound", CentRound)
@@ -102,12 +110,12 @@ class PageMaker(
     def RequestLogin(self, url=None):
         """Please login"""
         if self.user:
-            return uweb3.Redirect("/products")
+            return uweb3.Redirect("/products", httpcode=303)
         if not url and "url" in self.get:
             url = self.get.getfirst("url")
         return {"url": url}
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @uweb3.decorators.checkxsrf
     @uweb3.decorators.TemplateParser("admin.html")
     def RequestAdmin(self):
@@ -222,7 +230,7 @@ class PageMaker(
             return {"usersucces": "Your new user was added", "users": users}
         return {"users": users}
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @uweb3.decorators.checkxsrf
     @uweb3.decorators.TemplateParser("apisettings.html")
     def RequestApiSettings(self):
@@ -305,7 +313,7 @@ class PageMaker(
             }
         return {"keys": keys}
 
-    @uweb3.decorators.loggedin
+    @loggedin
     def RequestIndex(self):
         """Returns the homepage"""
         return self.req.Redirect("/products")
