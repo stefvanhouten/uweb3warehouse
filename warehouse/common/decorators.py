@@ -20,23 +20,28 @@ def NotExistsErrorCatcher(f):
 def apiuser(f):
     """Decorator to check if the given API key is allowed to access the resource."""
 
-    def wrapper(*args, **kwargs):
+    def wrapper(pagemaker, *args, **kwargs):
         # This is bypassed if a user is already logged in trough a session
-        if args[0].user:
-            args[0].apikey = None
-            return f(*args, **kwargs)
-        key = None
-        if "apikey" in args[0].get:
-            key = args[0].get.getfirst("apikey")
-        elif "apikey" in args[0].post:
-            key = args[0].post["apikey"]
-        elif "apikey" in args[0].req.headers:
-            key = args[0].req.headers.get("apikey")
+        if pagemaker.user or pagemaker.api_user:
+            return f(pagemaker, *args, **kwargs)
+        apikey = None
+
+        if "apikey" in pagemaker.get:
+            apikey = pagemaker.get.getfirst("apikey")
+        elif "apikey" in pagemaker.post:
+            apikey = pagemaker.post["apikey"]
+        elif "apikey" in pagemaker.req.headers:
+            apikey = pagemaker.req.headers.get("apikey")
+
+        authenticator = pagemaker.auth_services.get_authenticator(
+            "apiuser", connection=pagemaker.connection, apikey=apikey
+        )
         try:
-            args[0].apikey = model.Apiuser.FromKey(args[0].connection, key)
-        except uweb3.model.NotExistError as apierror:
+            pagemaker.apikey = apikey
+            pagemaker.api_user = authenticator.authenticate()
+        except ValueError as apierror:
             return uweb3.Response(content={"error": str(apierror)}, httpcode=403)
-        return f(*args, **kwargs)
+        return f(pagemaker, *args, **kwargs)
 
     return wrapper
 
