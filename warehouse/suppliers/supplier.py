@@ -5,7 +5,7 @@ import uweb3
 
 from warehouse import basepages
 from warehouse.common import model as common_model
-from warehouse.common.decorators import NotExistsErrorCatcher
+from warehouse.common.decorators import NotExistsErrorCatcher, loggedin
 from warehouse.common.helpers import PagedResult
 from warehouse.products import helpers
 from warehouse.products import model as product_model
@@ -15,7 +15,7 @@ from warehouse.suppliers import model
 class PageMaker(basepages.PageMaker):
     TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @uweb3.decorators.TemplateParser("suppliers.html")
     def RequestSuppliers(self, error=None, success=None):
         """Returns the suppliers page"""
@@ -45,7 +45,7 @@ class PageMaker(basepages.PageMaker):
             "success": success,
         }
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @NotExistsErrorCatcher
     @uweb3.decorators.checkxsrf
     def RequestSupplierSave(self, name):
@@ -63,14 +63,14 @@ class PageMaker(basepages.PageMaker):
         supplier.Save()
         return self.RequestSuppliers(success="Changes saved.")
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @NotExistsErrorCatcher
     @uweb3.decorators.TemplateParser("supplier.html")
     def RequestSupplier(self, name):
         """Returns the supplier page"""
         return {"supplier": model.Supplier.FromName(self.connection, name)}
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @uweb3.decorators.checkxsrf
     def RequestSupplierNew(self):
         """Requests the creation of a new supplier."""
@@ -108,7 +108,7 @@ class PageMaker(basepages.PageMaker):
             return self.Error("That name was already taken, go back, try again!", 200)
         return self.req.Redirect("/supplier/%s" % supplier["name"], httpcode=301)
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @NotExistsErrorCatcher
     @uweb3.decorators.checkxsrf
     def RequestSupplierRemove(self, supplier):
@@ -117,7 +117,7 @@ class PageMaker(basepages.PageMaker):
         supplier.Delete()
         return self.req.Redirect("/suppliers", httpcode=301)
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @NotExistsErrorCatcher
     @uweb3.decorators.checkxsrf
     @uweb3.decorators.TemplateParser("supplier.html")

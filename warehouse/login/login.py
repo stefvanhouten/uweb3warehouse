@@ -4,6 +4,7 @@ import uweb3
 from uweb3.libs import mail
 
 from warehouse import basepages
+from warehouse.common.decorators import loggedin
 from warehouse.login import model
 
 
@@ -124,7 +125,7 @@ class PageMaker(basepages.PageMaker):
             "resetform.html", resethash=resethash, resetuser=user, message=""
         )
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @uweb3.decorators.checkxsrf
     @uweb3.decorators.TemplateParser("usersettings.html")
     def RequestUserSettings(self):

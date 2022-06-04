@@ -8,7 +8,7 @@ import uweb3
 
 from warehouse import basepages
 from warehouse.common import model as common_model
-from warehouse.common.decorators import NotExistsErrorCatcher
+from warehouse.common.decorators import NotExistsErrorCatcher, loggedin
 from warehouse.common.helpers import PagedResult
 from warehouse.login import model as login_model
 from warehouse.products import forms, model
@@ -19,7 +19,7 @@ class PageMaker(basepages.PageMaker):
 
     TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @uweb3.decorators.TemplateParser("products.html")
     def RequestProducts(self, product_form=None):
         """Returns the Products page"""
@@ -66,7 +66,7 @@ class PageMaker(basepages.PageMaker):
             "product_form": product_form,
         }
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @NotExistsErrorCatcher
     @uweb3.decorators.TemplateParser("product.html")
     def RequestProduct(self, sku, product_form=None, assemble_form=None):
@@ -117,7 +117,7 @@ class PageMaker(basepages.PageMaker):
             "assemble_form": assemble_form,
         }
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @uweb3.decorators.checkxsrf
     def RequestProductNew(self):
         """Requests the creation of a new product."""
@@ -137,7 +137,7 @@ class PageMaker(basepages.PageMaker):
             return self.Error("Something went wrong", 200)
         return self.req.Redirect(f"/product/{product['sku']}", httpcode=301)
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @NotExistsErrorCatcher
     def RequestProductSave(self, sku):
         """Saves changes to the product"""
@@ -156,7 +156,7 @@ class PageMaker(basepages.PageMaker):
 
         return uweb3.Redirect(f"/product/{product['sku']}", httpcode=303)
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @NotExistsErrorCatcher
     @uweb3.decorators.checkxsrf
     def RequestProductAssemble(self, sku):
@@ -190,7 +190,7 @@ class PageMaker(basepages.PageMaker):
             return self.Error("That part was already assembled in this product!", 200)
         return self.req.Redirect(f"/product/{product['sku']}", httpcode=301)
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @NotExistsErrorCatcher
     @uweb3.decorators.checkxsrf
     def RequestProductAssemblySave(self, sku):
@@ -214,7 +214,7 @@ class PageMaker(basepages.PageMaker):
                 mate.Save()
         return self.req.Redirect(f"/product/{product['sku']}", httpcode=301)
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @NotExistsErrorCatcher
     @uweb3.decorators.checkxsrf
     def RequestProductRemove(self, sku):
@@ -223,7 +223,7 @@ class PageMaker(basepages.PageMaker):
         product.Delete()
         return self.req.Redirect("/", httpcode=301)
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @NotExistsErrorCatcher
     @uweb3.decorators.checkxsrf
     def RequestProductStock(self, sku):
@@ -257,7 +257,7 @@ class PageMaker(basepages.PageMaker):
             return self.Error(error)
         return self.req.Redirect(f"/product/{product['sku']}", httpcode=301)
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @uweb3.decorators.TemplateParser("gs1.html")
     def RequestGS1(self):
         """Returns the gs1 page"""
@@ -270,7 +270,7 @@ class PageMaker(basepages.PageMaker):
         )
         return {"products": products}
 
-    @uweb3.decorators.loggedin
+    @loggedin
     @uweb3.decorators.TemplateParser("ean.html")
     def RequestEAN(self):
         """Returns the EAN page"""
