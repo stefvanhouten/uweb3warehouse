@@ -37,6 +37,9 @@ class PageMaker(
         """Sets up all the default vars"""
         self.auth_services = login_helpers.AuthFactory()
         self.auth_services.register_auth("login", login_helpers.LoginServiceBuilder())
+        self.auth_services.register_auth(
+            "apiuser", login_helpers.ApiUserServiceBuilder()
+        )
 
         self.parser.RegisterTag("scripts", None)
         self.parser.RegisterTag("year", time.strftime("%Y"))
