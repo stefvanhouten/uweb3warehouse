@@ -39,7 +39,28 @@
 </section>
 <section>
     <h2>Import stock</h2>
+
     <form action="/supplier/updatestock/[supplier:name]" method="post" class="supplier" enctype="multipart/form-data">
+        <input type="hidden" name="xsrf" value="[xsrf]">
+        {{ for field in [supplier_stock_form] }}
+            <p>[field:description]</p>
+            {{ if [field:errors] }}
+                {{ for error in [field:errors] }}
+                    <p class="error">[error]</p>
+                {{ endfor }}
+            {{ endif }}
+            <div>
+                [field:label]
+                [field]
+            </div>
+        {{ endfor }}
+        <div>
+            <input type="submit" value="upload" />
+        </div>
+    </form>
+
+
+    <!-- <form action="/supplier/updatestock/[supplier:name]" method="post" class="supplier" enctype="multipart/form-data">
     <input type="hidden" id="xsrf" name="xsrf" value="[xsrf]" />
     <fieldset>
         <legend>Setup parser column mappings</legend>
@@ -58,7 +79,7 @@
         <input type="file" id="fileupload" name="fileupload" />
     </fieldset>
     <input type="submit" value="upload" />
-    </form>
+    </form> -->
 </section>
 
 {{ ifpresent [processed_products] }}
