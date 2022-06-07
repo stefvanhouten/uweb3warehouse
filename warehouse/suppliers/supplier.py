@@ -9,7 +9,7 @@ from warehouse.common.decorators import NotExistsErrorCatcher, loggedin
 from warehouse.common.helpers import PagedResult
 from warehouse.products import helpers
 from warehouse.products import model as product_model
-from warehouse.suppliers import model
+from warehouse.suppliers import forms, model
 
 
 class PageMaker(basepages.PageMaker):
@@ -68,7 +68,12 @@ class PageMaker(basepages.PageMaker):
     @uweb3.decorators.TemplateParser("supplier.html")
     def RequestSupplier(self, name):
         """Returns the supplier page"""
-        return {"supplier": model.Supplier.FromName(self.connection, name)}
+        supplier_stock_form = forms.ImportSupplierStock(self.post)
+
+        return dict(
+            supplier=model.Supplier.FromName(self.connection, name),
+            supplier_stock_form=supplier_stock_form,
+        )
 
     @loggedin
     @uweb3.decorators.checkxsrf
@@ -122,6 +127,7 @@ class PageMaker(basepages.PageMaker):
     @uweb3.decorators.checkxsrf
     @uweb3.decorators.TemplateParser("supplier.html")
     def UpdateSupplierStock(self, supplier):
+        supplier_stock_form = forms.ImportSupplierStock(self.post)
         if not self.files or not self.files.get("fileupload"):
             return self.Error(error="No file was uploaded.")
 
@@ -132,6 +138,7 @@ class PageMaker(basepages.PageMaker):
             return self.Error(error="Name and stock mapping values must be set.")
 
         supplier = model.Supplier.FromName(self.connection, supplier)
+
         file = self.files["fileupload"][0]
 
         parser = helpers.StockParser(
@@ -169,4 +176,5 @@ class PageMaker(basepages.PageMaker):
             "supplier": supplier,
             "processed_products": importer.processed_products,
             "unprocessed_products": importer.unprocessed_products,
+            "supplier_stock_form": supplier_stock_form,
         }
