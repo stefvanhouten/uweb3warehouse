@@ -1,5 +1,4 @@
 import decimal
-from dis import disassemble
 
 from wtforms import (
     DecimalField,
@@ -45,6 +44,8 @@ class ProductForm(Form):
 
 
 class SupplierProduct(Form):
+    """Form used to add a supplier to a product on the product page."""
+
     supplier = SelectField("supplier")
     cost = DecimalField(
         "cost",
