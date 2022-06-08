@@ -8,6 +8,7 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Suppliers</th>
                 <th>EAN</th>
                 <th>Created</th>
             </tr>
@@ -16,6 +17,7 @@
             {{ for product in [products] }}
             <tr>
                 <td><a href="/product/[product:sku]">[product:name]</a></td>
+                <td><a href="/product/[product:sku]/suppliers">Suppliers</a></td>
                 <td>[product:Eancode]</td>
                 <td title="[product:dateCreated]">[product:dateCreated|DateOnly]</td>
             </tr>
