@@ -19,6 +19,21 @@ from warehouse.common import model as common_model
 class Supplierproduct(model.Record):
     """Used for mapping a product to a supplier product."""
 
+    @classmethod
+    def Products(self, connection, supplier):
+        return self.List(
+            connection,
+            conditions=(
+                f"supplier={supplier['ID']}",
+                common_model.NOTDELETED,
+            ),
+        )
+
+    def Delete(self):
+        """Overwrites the default Delete and sets the dateDeleted datetime instead"""
+        self["dateDeleted"] = str(pytz.utc.localize(datetime.datetime.utcnow()))[0:19]
+        self.Save()
+
 
 class Supplier(model.Record):
     """Provides a model abstraction for the Supplier table"""
@@ -30,7 +45,7 @@ class Supplier(model.Record):
             connection,
             conditions=[common_model.NOTDELETED] + conditions,
             *args,
-            **kwargs
+            **kwargs,
         )
 
     @classmethod
@@ -50,7 +65,7 @@ class Supplier(model.Record):
             conditions=['name like "%%%s%%"' % connection.EscapeValues(query)[1:-1]]
             + conditions,
             order=[("ID", True)],
-            **kwargs
+            **kwargs,
         )
 
     @classmethod
