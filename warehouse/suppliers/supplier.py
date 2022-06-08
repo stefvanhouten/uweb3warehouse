@@ -51,11 +51,22 @@ class PageMaker(basepages.PageMaker):
     def RequestSupplierProducts(self, supplierID):
         supplier = model.Supplier.FromPrimary(self.connection, supplierID)
         supplier_products = list(
-            model.Supplierproduct.List(
-                self.connection, conditions=f"supplier={supplier['ID']}"
-            )
+            model.Supplierproduct.Products(self.connection, supplier)
         )
-        return dict(supplier_products=supplier_products)
+        return dict(
+            supplier_products=supplier_products,
+            supplier=supplier,
+        )
+
+    @loggedin
+    @NotExistsErrorCatcher
+    def RequestSupplierProductDelete(self, supplierID, productID):
+        supplier = model.Supplier.FromPrimary(self.connection, supplierID)
+        product = model.Supplierproduct.FromPrimary(self.connection, productID)
+        if product["supplier"] != supplier:
+            return
+        product.Delete()
+        return self.req.Redirect(f"/supplier/{supplierID}/products")
 
     @loggedin
     @NotExistsErrorCatcher
