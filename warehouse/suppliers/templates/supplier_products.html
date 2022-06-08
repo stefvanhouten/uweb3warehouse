@@ -1,11 +1,14 @@
 [header]
 <section>
-    <h2>Products by this supplier</h2>
+    <h2>Products by supplier: [supplier:name]</h2>
     <table class="products">
         <thead>
             <tr>
                 <th>Supplier product name</th>
                 <th>Our product</th>
+                <th>Supplier sku</th>
+                <th>Supplier stock</th>
+                <th>Lead</th>
                 <th>Delete</th>
             </tr>
         </thead>
@@ -14,8 +17,11 @@
             <tr>
                 <td>[supplier_product:name]</td>
                 <td><a href="/product/[supplier_product:product:sku]">[supplier_product:product:name]</a></td>
+                <td>[supplier_product:supplier_sku]</td>
+                <td>[supplier_product:supplier_stock]</td>
+                <td>[supplier_product:lead]</td>
                 <td>
-                    <form action="/supplier/[supplier:id]/product/[supplier_product:ID]/remove" method="post">
+                    <form action="/supplier/[supplier:ID]/products/[supplier_product:ID]/delete" method="post">
                         <input type="hidden" name="xsrf" value="[xsrf]">
                         <input type="submit" value="Remove"
                             onclick="return confirm('Are you sure you want to delete the product from this supplier?');">

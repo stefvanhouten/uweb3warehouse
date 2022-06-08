@@ -29,7 +29,7 @@
                 <td><a href="/product/[product:sku]">[product:name]</a></td>
                 <td title="[product:dateCreated]">[product:dateCreated|DateOnly]</td>
                 <td>
-                    <form action="/product/[product:sku]/remove" method="post">
+                    <form action="/product/[product:sku]/delete" method="post">
                         <input type="hidden" name="xsrf" value="[xsrf]">
                         <input type="submit" value="Remove"
                             onclick="return confirm('Are you sure you want to delete this products? All coupled sub products will not be deleted.');">

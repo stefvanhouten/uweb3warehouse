@@ -19,7 +19,7 @@ urls = [
     ),
     ("/", (products.PageMaker, "RequestProductNew"), "POST"),
     (
-        "/product/([^/]*)/remove",
+        "/product/([^/]*)/delete",
         (products.PageMaker, "RequestProductRemove"),
         "POST",
     ),
