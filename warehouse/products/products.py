@@ -400,7 +400,11 @@ class PageMaker(basepages.PageMaker):
             supplier_product_form=supplier_product_form,
             suppliers=list(
                 supplier_model.Supplierproduct.List(
-                    self.connection, conditions=(f'product = {product["ID"]}')
+                    self.connection,
+                    conditions=(
+                        f'product = {product["ID"]}',
+                        common_model.NOTDELETED,
+                    ),
                 )
             ),
         )
