@@ -9,7 +9,7 @@ class ImportSupplierStock(Form):
     )
     column_stock_mapping = StringField(
         "Stock column name",
-        [validators.Length(min=5, max=255), validators.DataRequired()],
+        [validators.DataRequired()],
         description="The column name in the file that contains the stock amount.",
     )
     fileupload = FileField("Select files")
