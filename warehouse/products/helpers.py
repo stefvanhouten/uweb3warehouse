@@ -71,8 +71,8 @@ class StockImporter:
             mapping (dict): Contains the key value mappings for the columns in the table.
                 For example {"amount": "Op voorraad"} would mean that the amount column in the table is named "Op voorraad".
         """
-        self.processed_products = []
-        self.unprocessed_products = []
+        self._processed_products = []
+        self._unprocessed_products = []
         self.connection = connection
         self.mapping = mapping
 
@@ -93,6 +93,7 @@ class StockImporter:
     def _import_products(self, products):
         for product in products:
             self._import_product(product)
+        return self._processed_products, self._unprocessed_products
 
     def _import_product(self, parsed_product):
         # Find corresponding product by mapping the column name to the database field name.
@@ -101,7 +102,7 @@ class StockImporter:
         product = self._find_product(name)
 
         if not product:
-            self.unprocessed_products.append(self._normalize_keys(parsed_product))
+            self._unprocessed_products.append(self._normalize_keys(parsed_product))
             return
 
         self._add_stock(product, parsed_product[self.mapping["amount"]])
@@ -138,7 +139,7 @@ class StockImporter:
         """
         pair = namedtuple("ProductPair", "parsed_product product".split())
         normalized_result = self._normalize_keys(parsed_product)
-        self.processed_products.append(pair(normalized_result, product))
+        self._processed_products.append(pair(normalized_result, product))
 
     def _normalize_keys(self, result):
         """Normalize the keys of the result dictionary so that they match the database field names."""
