@@ -21,7 +21,7 @@ def import_stock_from_file(supplier_stock_form, supplier, connection):
     """
     parsed_data = _parse_file(supplier_stock_form)
     products = get_supplier_products(connection, supplier)
-    importer = _setup_importer(connection, supplier_stock_form)
+    importer = _setup_importer(connection, supplier_stock_form, supplier)
     return importer.Import(
         parsed_data,
         products,
@@ -57,11 +57,12 @@ def get_supplier_products(connection, supplier):
     )
 
 
-def _setup_importer(connection, supplier_stock_form):
+def _setup_importer(connection, supplier_stock_form, supplier):
     return product_helpers.StockImporter(
         connection,
         {
             "name": supplier_stock_form.column_name_mapping.data,
             "amount": supplier_stock_form.column_stock_mapping.data,
         },
+        supplier,
     )
