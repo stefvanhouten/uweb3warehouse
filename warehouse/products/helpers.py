@@ -1,9 +1,16 @@
 import difflib
 from collections import namedtuple
+from typing import NamedTuple
 
 import pandas
 
 from warehouse.products import model
+from warehouse.suppliers import model as supplier_model
+
+
+class ProductPair(NamedTuple):
+    parsed_product: dict
+    supplier_product: supplier_model.Supplierproduct
 
 
 class StockParser:
@@ -125,14 +132,11 @@ class StockImporter:
         Returns:
             product (model.Product): The product that was found to be the best match.
         """
-        # Finds the top3 matches for the product name.
         closest_matches = difflib.get_close_matches(
-            name, self.product_names, n=3, cutoff=0.8
+            name, self.product_names, n=1, cutoff=0.9
         )
-        # If no match is found return None
         if not closest_matches:
             return None
-        # Get the actual Product object from the list of products and return it.
         return next((x for x in self.products if x["name"] == closest_matches[0]), None)
 
     def _add_to_processed(self, parsed_product, product):
@@ -145,9 +149,8 @@ class StockImporter:
             parsed_product (_type_): The product that was found by the parser.
             product (model.Product): The product that was found in the database.
         """
-        pair = namedtuple("ProductPair", "parsed_product product".split())
         normalized_result = self._normalize_keys(parsed_product)
-        self._processed_products.append(pair(normalized_result, product))
+        self._processed_products.append(ProductPair(normalized_result, product))
 
     def _normalize_keys(self, result):
         """Normalize the keys of the result dictionary so that they match the database field names."""

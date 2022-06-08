@@ -58,28 +58,6 @@
             <input type="submit" value="upload" />
         </div>
     </form>
-
-
-    <!-- <form action="/supplier/updatestock/[supplier:name]" method="post" class="supplier" enctype="multipart/form-data">
-    <input type="hidden" id="xsrf" name="xsrf" value="[xsrf]" />
-    <fieldset>
-        <legend>Setup parser column mappings</legend>
-        <div>
-            <label for="column_name_mapping">Column value containing product name</label>
-            <input name="column_name_mapping" id="column_name_mapping" ></input>
-        </div>
-        <div>
-            <label for="column_stock_mapping">Column value containing product stock</label>
-            <input name="column_stock_mapping" id="column_stock_mapping"></input>
-        </div>
-    </fieldset>
-    <fieldset>
-        <legend>Import HTML table containing stock data</legend>
-        <label for="files">Select files:</label>
-        <input type="file" id="fileupload" name="fileupload" />
-    </fieldset>
-    <input type="submit" value="upload" />
-    </form> -->
 </section>
 
 {{ ifpresent [processed_products] }}
@@ -98,7 +76,7 @@
                     {{ for pair in [processed_products] }}
                     <tr>
                         <td>[pair:parsed_product:name]</td>
-                        <td><a href="/product/[pair:product:sku]">[pair:product:name]</a></td>
+                        <td><a href="/product/[pair:supplier_product:product:sku]">[pair:supplier_product:name]</a></td>
                         <td>[pair:parsed_product:amount]</td>
                     </tr>
                     {{ endfor }}
