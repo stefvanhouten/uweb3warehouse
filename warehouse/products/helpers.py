@@ -89,11 +89,11 @@ class StockImporter:
         self.product_names = [p["name"] for p in self.products]
         for found_product_list in self.parsed_results:
             self._import_products(found_product_list)
+        return self._processed_products, self._unprocessed_products
 
     def _import_products(self, products):
         for product in products:
             self._import_product(product)
-        return self._processed_products, self._unprocessed_products
 
     def _import_product(self, parsed_product):
         # Find corresponding product by mapping the column name to the database field name.
