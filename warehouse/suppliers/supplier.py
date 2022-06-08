@@ -53,9 +53,14 @@ class PageMaker(basepages.PageMaker):
         supplier_products = list(
             model.Supplierproduct.Products(self.connection, supplier)
         )
+
+        supplier_product_form = helpers.get_supplier_product_form(
+            self.connection, supplier
+        )
         return dict(
             supplier_products=supplier_products,
             supplier=supplier,
+            supplier_product_form=supplier_product_form,
         )
 
     @loggedin

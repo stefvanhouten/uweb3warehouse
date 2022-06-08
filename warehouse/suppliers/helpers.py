@@ -1,7 +1,8 @@
 from io import StringIO
 
 from warehouse.products import helpers as product_helpers
-from warehouse.suppliers import model
+from warehouse.products import model as product_model
+from warehouse.suppliers import forms, model
 
 
 def import_stock_from_file(supplier_stock_form, supplier, connection):
@@ -20,7 +21,7 @@ def import_stock_from_file(supplier_stock_form, supplier, connection):
         KeyError: If the column names are not found in the file.
     """
     parsed_data = _parse_file(supplier_stock_form)
-    products = get_supplier_products(connection, supplier)
+    products = model.Supplierproduct.Products(connection, supplier)
     importer = _setup_importer(connection, supplier_stock_form, supplier)
     return importer.Import(
         parsed_data,
@@ -42,21 +43,6 @@ def _parse_file(supplier_stock_form):
     return parser.Parse()
 
 
-def get_supplier_products(connection, supplier):
-    """Return the SupplierProducts for the supplier.
-
-    Args:
-        connection (PageMaker.connection):  Connection object to access the database
-        supplier (model.Supplier): The supplier object from which we want to retrieve the SupplierProducts.
-
-    Returns:
-        Generator: A generator that yields the SupplierProducts for the supplier.
-    """
-    return model.Supplierproduct.List(
-        connection, conditions=[f'supplier = {supplier["ID"]}']
-    )
-
-
 def _setup_importer(connection, supplier_stock_form, supplier):
     return product_helpers.StockImporter(
         connection,
@@ -66,3 +52,11 @@ def _setup_importer(connection, supplier_stock_form, supplier):
         },
         supplier,
     )
+
+
+def get_supplier_product_form(connection, supplier):
+    products = product_model.Product.List(connection)
+    form = forms.SupplierAddProductForm()
+    form.supplier.choices = [(supplier["ID"], supplier["name"])]
+    form.product.choices = [(p["sku"], p["name"]) for p in products]
+    return form
