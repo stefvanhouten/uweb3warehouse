@@ -7,9 +7,8 @@ from warehouse import basepages
 from warehouse.common import model as common_model
 from warehouse.common.decorators import NotExistsErrorCatcher, loggedin
 from warehouse.common.helpers import PagedResult
-from warehouse.products import helpers
-from warehouse.products import model as product_model
-from warehouse.suppliers import forms, model
+from warehouse.products import helpers as product_helpers
+from warehouse.suppliers import forms, helpers, model
 
 
 class PageMaker(basepages.PageMaker):
@@ -66,9 +65,10 @@ class PageMaker(basepages.PageMaker):
     @loggedin
     @NotExistsErrorCatcher
     @uweb3.decorators.TemplateParser("supplier.html")
-    def RequestSupplier(self, name):
+    def RequestSupplier(self, name, supplier_stock_form=None):
         """Returns the supplier page"""
-        supplier_stock_form = forms.ImportSupplierStock(self.post)
+        if not supplier_stock_form:
+            supplier_stock_form = forms.ImportSupplierStock(self.post)
 
         return dict(
             supplier=model.Supplier.FromName(self.connection, name),
@@ -127,54 +127,30 @@ class PageMaker(basepages.PageMaker):
     @uweb3.decorators.checkxsrf
     @uweb3.decorators.TemplateParser("supplier.html")
     def UpdateSupplierStock(self, supplier):
-        supplier_stock_form = forms.ImportSupplierStock(self.post)
+        supplier = model.Supplier.FromName(self.connection, supplier)
+
         if not self.files or not self.files.get("fileupload"):
             return self.Error(error="No file was uploaded.")
 
-        column_name_mapping = self.post.getfirst("column_name_mapping", None)
-        column_stock_mapping = self.post.getfirst("column_stock_mapping", None)
+        supplier_stock_form = forms.ImportSupplierStock(self.post)
+        supplier_stock_form.fileupload.data = self.files.get("fileupload")
+        supplier_stock_form.validate()
 
-        if not column_name_mapping or not column_stock_mapping:
-            return self.Error(error="Name and stock mapping values must be set.")
-
-        supplier = model.Supplier.FromName(self.connection, supplier)
-
-        file = self.files["fileupload"][0]
-
-        parser = helpers.StockParser(
-            file_path=StringIO(file["content"]),
-            columns=(
-                column_name_mapping,
-                column_stock_mapping,
-            ),
-            normalize_columns=(column_name_mapping,),
-        )
+        if supplier_stock_form.errors:
+            return self.RequestSupplier(
+                name=supplier, supplier_stock_form=supplier_stock_form
+            )
 
         try:
-            parsed_result = parser.Parse()
+            processed_products, unprocessed_products = helpers.import_stock_from_file(
+                supplier_stock_form, supplier, self.connection
+            )
         except KeyError as exception:
             return self.RequestInvalidcommand(error=exception.args[0])
 
-        products = list(
-            product_model.Product.List(
-                self.connection, conditions=[f'supplier = {supplier["ID"]}']
-            )
-        )
-
-        importer = helpers.StockImporter(
-            self.connection,
-            {
-                "amount": column_stock_mapping,
-                "name": column_name_mapping,
-            },
-        )
-        importer.Import(
-            parsed_result,
-            products,
-        )
         return {
             "supplier": supplier,
-            "processed_products": importer.processed_products,
-            "unprocessed_products": importer.unprocessed_products,
+            "processed_products": processed_products,
+            "unprocessed_products": unprocessed_products,
             "supplier_stock_form": supplier_stock_form,
         }
