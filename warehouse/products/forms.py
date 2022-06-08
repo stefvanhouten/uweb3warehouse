@@ -74,7 +74,7 @@ class SupplierProduct(Form):
     supplier_sku = StringField(
         "sku",
         [validators.Optional(), validators.Length(max=45)],
-        description="The ",
+        description="The sku that the supplier uses for this product",
     )
     supplier_stock = IntegerField(
         "supplier_stock",
@@ -169,14 +169,14 @@ def get_stock_factory(postdata=None):
     """
     factory = StockMutationFactory()
 
-    assemble_from_part = ProductAssemblyForm(postdata)
+    assemble_from_part = ProductAssemblyForm(postdata, prefix="product-assembly")
     assemble_from_part.amount.description = "How many were assembled"
     assemble_from_part.reference.description = "Optional reference for this assembly"
     assemble_from_part.lot.description = (
         "The lot number for these newly assembled products"
     )
 
-    disassemble_into_parts = ProductAssemblyForm(postdata)
+    disassemble_into_parts = ProductAssemblyForm(postdata, prefix="product-disassembly")
     disassemble_into_parts.amount.description = "How many were disassembled"
     disassemble_into_parts.reference.description = (
         "The invoice ID from the supplier, or the customer"
@@ -185,7 +185,9 @@ def get_stock_factory(postdata=None):
         "The lot number of the disassembled products"
     )
 
-    factory.register_form("stock_form", ProductStockForm(postdata))
+    factory.register_form(
+        "stock_form", ProductStockForm(postdata, prefix="product-stock")
+    )
     factory.register_form("assemble_from_part", assemble_from_part)
     factory.register_form("disassemble_into_parts", disassemble_into_parts)
 

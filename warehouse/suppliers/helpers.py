@@ -54,9 +54,9 @@ def _setup_importer(connection, supplier_stock_form, supplier):
     )
 
 
-def get_supplier_product_form(connection, supplier):
+def get_supplier_product_form(connection, supplier, postdata):
     products = product_model.Product.List(connection)
-    form = forms.SupplierAddProductForm()
+    form = forms.SupplierAddProductForm(postdata, prefix="sup")
     form.supplier.choices = [(supplier["ID"], supplier["name"])]
-    form.product.choices = [(p["sku"], p["name"]) for p in products]
+    form.product.choices = [(p["ID"], p["name"]) for p in products]
     return form

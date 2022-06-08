@@ -53,10 +53,13 @@ class PageMaker(basepages.PageMaker):
         supplier_products = list(
             model.Supplierproduct.Products(self.connection, supplier)
         )
-
         supplier_product_form = helpers.get_supplier_product_form(
-            self.connection, supplier
+            self.connection, supplier, self.post
         )
+        if self.post and supplier_product_form.validate():
+            model.Supplierproduct.Create(self.connection, supplier_product_form.data)
+            return self.req.Redirect(f"/supplier/{supplierID}/products", httpcode=301)
+
         return dict(
             supplier_products=supplier_products,
             supplier=supplier,
@@ -71,7 +74,7 @@ class PageMaker(basepages.PageMaker):
         if product["supplier"] != supplier:
             return
         product.Delete()
-        return self.req.Redirect(f"/supplier/{supplierID}/products")
+        return self.req.Redirect(f"/supplier/{supplierID}/products", httpcode=301)
 
     @loggedin
     @NotExistsErrorCatcher
@@ -97,7 +100,9 @@ class PageMaker(basepages.PageMaker):
     def RequestSupplier(self, name, supplier_stock_form=None):
         """Returns the supplier page"""
         if not supplier_stock_form:
-            supplier_stock_form = forms.ImportSupplierStock(self.post)
+            supplier_stock_form = forms.ImportSupplierStock(
+                self.post, prefix="import-supplier-stock"
+            )
 
         return dict(
             supplier=model.Supplier.FromName(self.connection, name),
@@ -161,7 +166,9 @@ class PageMaker(basepages.PageMaker):
         if not self.files or not self.files.get("fileupload"):
             return self.Error(error="No file was uploaded.")
 
-        supplier_stock_form = forms.ImportSupplierStock(self.post)
+        supplier_stock_form = forms.ImportSupplierStock(
+            self.post, prefix="import-supplier-stock"
+        )
         supplier_stock_form.fileupload.data = self.files.get("fileupload")
         supplier_stock_form.validate()
 

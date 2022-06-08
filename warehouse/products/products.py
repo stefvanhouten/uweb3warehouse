@@ -55,7 +55,7 @@ class PageMaker(basepages.PageMaker):
         )
 
         if not product_form:
-            product_form = forms.ProductForm()
+            product_form = forms.ProductForm(prefix="product")
         return {
             "supplier": supplier,
             "products": products,
@@ -111,10 +111,10 @@ class PageMaker(basepages.PageMaker):
         )
 
         if not product_form:
-            product_form = forms.ProductForm()
+            product_form = forms.ProductForm(prefix="product")
             product_form.process(data=product)
         if not assemble_form:
-            assemble_form = forms.ProductAssembleFromPartForm()
+            assemble_form = forms.ProductAssembleFromPartForm(prefix="product-part")
             assemble_form.part.choices = helpers.possibleparts_select_list(
                 possibleparts
             )
@@ -147,7 +147,7 @@ class PageMaker(basepages.PageMaker):
     @uweb3.decorators.checkxsrf
     def RequestProductNew(self):
         """Requests the creation of a new product."""
-        form = forms.ProductForm(self.post)
+        form = forms.ProductForm(self.post, prefix="product")
         form.validate()
         if form.errors:
             return self.RequestProducts(product_form=form)
@@ -171,7 +171,7 @@ class PageMaker(basepages.PageMaker):
     def RequestProductSave(self, sku):
         """Saves changes to the product"""
         product = model.Product.FromSku(self.connection, sku)
-        form = forms.ProductForm(self.post)
+        form = forms.ProductForm(self.post, prefix="product")
         form.validate()
 
         if form.errors:
@@ -194,7 +194,7 @@ class PageMaker(basepages.PageMaker):
         possibleparts = model.Product.List(
             self.connection, conditions=[f'ID != {product["ID"]}']
         )
-        form = forms.ProductAssembleFromPartForm(self.post)
+        form = forms.ProductAssembleFromPartForm(self.post, prefix="product-part")
         form.part.choices = helpers.possibleparts_select_list(possibleparts)
         form.validate()
 
@@ -380,7 +380,9 @@ class PageMaker(basepages.PageMaker):
     def RequestProductSuppliers(self, sku):
         product = model.Product.FromSku(self.connection, sku)
 
-        supplier_product_form = forms.SupplierProduct(self.post)
+        supplier_product_form = forms.SupplierProduct(
+            self.post, prefix="supplier-product"
+        )
         supplier_product_form.supplier.choices = helpers.suppliers_select_list(
             supplier_model.Supplier.List(self.connection)
         )
@@ -426,7 +428,7 @@ class PageMaker(basepages.PageMaker):
     @uweb3.decorators.TemplateParser("prices.html")
     def RequestProductPrices(self, sku):
         product = model.Product.FromSku(self.connection, sku)
-        product_price_form = forms.ProductPriceForm(self.post)
+        product_price_form = forms.ProductPriceForm(self.post, prefix="product-price")
 
         if self.post and product_price_form.validate():
             new_product_price = {"product": product["ID"], **product_price_form.data}
