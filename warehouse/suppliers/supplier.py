@@ -15,6 +15,7 @@ class PageMaker(basepages.PageMaker):
     TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
 
     @loggedin
+    @NotExistsErrorCatcher
     @uweb3.decorators.TemplateParser("suppliers.html")
     def RequestSuppliers(self, error=None, success=None):
         """Returns the suppliers page"""
@@ -43,6 +44,18 @@ class PageMaker(basepages.PageMaker):
             "error": error,
             "success": success,
         }
+
+    @loggedin
+    @NotExistsErrorCatcher
+    @uweb3.decorators.TemplateParser("supplier_products.html")
+    def RequestSupplierProducts(self, supplierID):
+        supplier = model.Supplier.FromPrimary(self.connection, supplierID)
+        supplier_products = list(
+            model.Supplierproduct.List(
+                self.connection, conditions=f"supplier={supplier['ID']}"
+            )
+        )
+        return dict(supplier_products=supplier_products)
 
     @loggedin
     @NotExistsErrorCatcher

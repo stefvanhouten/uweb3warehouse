@@ -26,6 +26,11 @@ urls = [
         "GET",
     ),
     (
+        "/supplier/([^/]*)/products",
+        (supplier.PageMaker, "RequestSupplierProducts"),
+        "GET",
+    ),
+    (
         "/supplier/([^/]*)/remove",
         (supplier.PageMaker, "RequestSupplierRemove"),
         "POST",

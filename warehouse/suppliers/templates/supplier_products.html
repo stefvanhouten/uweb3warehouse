@@ -1,0 +1,29 @@
+[header]
+<section>
+    <h2>Products by this supplier</h2>
+    <table class="products">
+        <thead>
+            <tr>
+                <th>Supplier product name</th>
+                <th>Our product</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ for supplier_product in [supplier_products] }}
+            <tr>
+                <td>[supplier_product:name]</td>
+                <td><a href="/product/[supplier_product:product:sku]">[supplier_product:product:name]</a></td>
+                <td>
+                    <form action="/supplier/[supplier:id]/product/[supplier_product:ID]/remove" method="post">
+                        <input type="hidden" name="xsrf" value="[xsrf]">
+                        <input type="submit" value="Remove"
+                            onclick="return confirm('Are you sure you want to delete the product from this supplier?');">
+                    </form>
+                </td>
+            </tr>
+            {{ endfor }}
+        </tbody>
+    </table>
+</section>
+[footer]

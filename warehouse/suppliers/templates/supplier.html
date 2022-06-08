@@ -2,7 +2,7 @@
 <script src="/js/forms.js"></script>
 <section>
     <h2>Edit Supplier: [supplier:name]</h2>
-    <p><a href="/?supplier=[supplier:ID]">Products by this supplier</a></a>
+    <p><a href="/supplier/[supplier:ID]/products">Products by this supplier</a></a>
     <form action="/supplier/[supplier:name]" method="post" class="supplier">
         <input type="hidden" name="xsrf" value="[xsrf]" />
         <div><label for="name">Name</label><input type="text" id="name" name="name" value="[supplier:name]"
