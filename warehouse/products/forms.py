@@ -13,10 +13,11 @@ from wtforms import (
 )
 
 
+# TODO: Fix inconsistencies between forms with different names
 class ProductForm(Form):
     sku = StringField(
         "sku",
-        [validators.Length(min=1, max=45)],
+        [validators.Length(min=1, max=45), validators.InputRequired()],
         description="""The name for each sku in your warehouse must be unique,
                       only products that can be ordered by end customers should have an easily recognizable sku.""",
     )
@@ -68,6 +69,11 @@ class SupplierProduct(Form):
         "lead",
         [validators.NumberRange(min=0), validators.Optional()],
         description="The amount of days that it takes to ship the product from the supplier to us.",
+    )
+    supplier_sku = StringField(
+        "sku",
+        [validators.Optional(), validators.Length(max=45)],
+        description="The ",
     )
     supplier_stock = IntegerField(
         "supplier_stock",
