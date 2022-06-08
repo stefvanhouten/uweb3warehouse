@@ -1,53 +1,61 @@
 [header]
 
 <section>
-  <h2>Your Products with an EAN barcode:</h2>
+    <h2>Your Products with an EAN barcode:</h2>
 
     {{ if len([products:items]) }}
     <table class="products">
-      <thead>
-        <tr><th>Name</th><th>Supplier</th><th>EAN</th><th>Created</th></tr>
-      </thead>
-      <tbody>
-      {{ for product in [products] }}
-        <tr>
-          <td><a href="/product/[product:sku]">[product:name]</a></td>
-          <td><a href="/supplier/[product:supplier:name]">[product:supplier:name]</a></td>
-          <td>[product:Eancode]</td>
-          <td title="[product:dateCreated]">[product:dateCreated|DateOnly]</td>
-        </tr>
-      {{ endfor }}
-      </tbody>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>EAN</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ for product in [products] }}
+            <tr>
+                <td><a href="/product/[product:sku]">[product:name]</a></td>
+                <td>[product:Eancode]</td>
+                <td title="[product:dateCreated]">[product:dateCreated|DateOnly]</td>
+            </tr>
+            {{ endfor }}
+        </tbody>
     </table>
 
-    {{ if  [products:pagecount] > 1 or [products:current] > 1 }}
-      <nav class="pagination">
+    {{ if [products:pagecount] > 1 or [products:current] > 1 }}
+    <nav class="pagination">
         <ol>
-          {{ if [products:current] > 1 }}
-            <li><a href="?page=1{{ ifpresent [linkarguments] }}&amp;[linkarguments]{{ endif }}" title="Go to page 1">First</a></li>
+            {{ if [products:current] > 1 }}
+            <li><a href="?page=1{{ ifpresent [linkarguments] }}&amp;[linkarguments]{{ endif }}"
+                    title="Go to page 1">First</a></li>
             {{ if [products:current] > 2 }}
-              <li><a href="?page=[products:prev]{{ ifpresent [linkarguments] }}&amp;[linkarguments]{{ endif }}" title="Go to page [products:items:prev]">Previous</a></li>
+            <li><a href="?page=[products:prev]{{ ifpresent [linkarguments] }}&amp;[linkarguments]{{ endif }}"
+                    title="Go to page [products:items:prev]">Previous</a></li>
             {{ endif }}
-          {{ endif }}
-          {{ for page in [products:pagenumbers] }}
+            {{ endif }}
+            {{ for page in [products:pagenumbers] }}
             {{ if [page] == [products:current] }}
-              <li class="active">[products:current]</li>
+            <li class="active">[products:current]</li>
             {{ else }}
-              <li><a href="?page=[page]{{ ifpresent [linkarguments] }}&amp;[linkarguments]{{ endif }}" title="Go to page [page]">[page]</a></li>
+            <li><a href="?page=[page]{{ ifpresent [linkarguments] }}&amp;[linkarguments]{{ endif }}"
+                    title="Go to page [page]">[page]</a></li>
             {{ endif }}
-          {{ endfor }}
-          {{ if [products:next] }}
-            {{ if [products:next] < [products:last] }}
-              <li><a href="?page=[products:next]{{ ifpresent [linkarguments] }}&amp;[linkarguments]{{ endif }}" title="Go to page [products:next]">Next</a></li>
-            {{ endif }}
-          <li><a href="?page=[products:last]{{ ifpresent [linkarguments] }}&amp;[linkarguments]{{ endif }}" title="Go to page [products:last]">Last</a></li>{{ endif }}
+            {{ endfor }}
+            {{ if [products:next] }}
+            {{ if [products:next] < [products:last] }} <li><a
+                    href="?page=[products:next]{{ ifpresent [linkarguments] }}&amp;[linkarguments]{{ endif }}"
+                    title="Go to page [products:next]">Next</a></li>
+                {{ endif }}
+                <li><a href="?page=[products:last]{{ ifpresent [linkarguments] }}&amp;[linkarguments]{{ endif }}"
+                        title="Go to page [products:last]">Last</a></li>{{ endif }}
         </ol>
-      </nav>
+    </nav>
     {{ endif }}
 
-  {{ else }}
+    {{ else }}
     <p class="info">You have no products with an EAN code yet.</p>
-  {{ endif }}
+    {{ endif }}
 </section>
 
 [footer]
