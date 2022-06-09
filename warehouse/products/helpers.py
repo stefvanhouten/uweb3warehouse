@@ -196,7 +196,10 @@ def update_stock(connection, sku, amount, reference=None):
             "reference": reference,
         },
     )
-    return {"stock": product.currentstock, "possible_stock": product.possiblestock}
+    return {
+        "stock": product.currentstock,
+        "possible_stock": product.possiblestock,
+    }
 
 
 def possibleparts_select_list(possibleparts):
@@ -222,7 +225,8 @@ class ProductPriceDTO(NamedTuple):
 
 class ProductDTOService:
     def to_dto(
-        self, product: model.Product | list[model.Product] | Iterable[model.Product]
+        self,
+        product: model.Product | list[model.Product] | Iterable[model.Product],
     ):
         match product:  # noqa: E999
             case [model.Product(), *_]:

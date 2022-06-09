@@ -210,7 +210,11 @@ class Product(model.Record):
 
         parts = list(self.parts)
         if not parts:
-            self._possiblestock = {"available": 0, "parts": None, "limitedby": None}
+            self._possiblestock = {
+                "available": 0,
+                "parts": None,
+                "limitedby": None,
+            }
             return self._possiblestock
 
         limitedby = parts[0]
@@ -431,7 +435,10 @@ class Product(model.Record):
             return self["ean"]
         if self["gs1"]:
             try:
-                return "%d%03d" % (int(self["supplier"]["gscode"]), self["gs1"])
+                return "%d%03d" % (
+                    int(self["supplier"]["gscode"]),
+                    self["gs1"],
+                )
             except (KeyError, ValueError):
                 return None
         return None

@@ -51,7 +51,8 @@ class PageMaker(
             "TextareaRowCount", lambda x: len(str(x).split("\n"))
         )
         self.parser.RegisterTag(
-            "header", self.parser.JITTag(lambda: self.parser.Parse("parts/header.html"))
+            "header",
+            self.parser.JITTag(lambda: self.parser.Parse("parts/header.html")),
         )
         self.parser.RegisterTag(
             "footer",
@@ -76,7 +77,8 @@ class PageMaker(
         if self.config.Read():
             try:
                 locale.setlocale(
-                    locale.LC_ALL, self.options["general"].get("locale", "en_GB")
+                    locale.LC_ALL,
+                    self.options["general"].get("locale", "en_GB"),
                 )
                 self.parser.RegisterFunction(
                     "currency",
@@ -270,7 +272,10 @@ class PageMaker(
             password = self.post.getfirst("password", "")
             password_confirm = self.post.getfirst("password_confirm", "")
             if password != password_confirm:
-                return {"error": "Passwords do not match, try again.", "keys": keys}
+                return {
+                    "error": "Passwords do not match, try again.",
+                    "keys": keys,
+                }
             try:
                 self.user.UpdatePassword(password)
             except ValueError:
@@ -284,7 +289,9 @@ class PageMaker(
                         local_hostname=self.options["general"]["host"]
                     ) as send_mail:
                         send_mail.Text(
-                            self.user["email"], "Warehouse account change", content
+                            self.user["email"],
+                            "Warehouse account change",
+                            content,
                         )
                 except mail.SMTPConnectError:
                     if not self.debug:

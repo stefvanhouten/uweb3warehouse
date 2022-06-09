@@ -180,7 +180,10 @@ class PageMaker(basepages.PageMaker):
             )
 
         try:
-            processed_products, unprocessed_products = helpers.import_stock_from_file(
+            (
+                processed_products,
+                unprocessed_products,
+            ) = helpers.import_stock_from_file(
                 supplier_stock_form, supplier, self.connection
             )
         except KeyError as exception:

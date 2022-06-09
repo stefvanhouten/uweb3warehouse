@@ -149,7 +149,9 @@ class PageMaker(basepages.PageMaker):
                         local_hostname=self.options["general"]["host"]
                     ) as send_mail:
                         send_mail.Text(
-                            self.user["email"], "Warehouse account change", content
+                            self.user["email"],
+                            "Warehouse account change",
+                            content,
                         )
                 except mail.SMTPConnectError:
                     if not self.debug:

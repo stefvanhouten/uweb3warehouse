@@ -42,7 +42,13 @@ class SortTable:
 
 class PagedResult:
     def __init__(
-        self, pagesize, page, modelCall, connection=None, modelargs=None, maxlinks=10
+        self,
+        pagesize,
+        page,
+        modelCall,
+        connection=None,
+        modelargs=None,
+        maxlinks=10,
     ):
         """Returns a dictionary with pagination information based on parameters.
 
@@ -91,7 +97,10 @@ class PagedResult:
                 self.current,
                 *range(
                     self.current + 1,
-                    min(self.current + int(maxlinks / 2) + 1, self.pagecount + 1),
+                    min(
+                        self.current + int(maxlinks / 2) + 1,
+                        self.pagecount + 1,
+                    ),
                 ),
             ]
         self.next = self.current + 1 if self.current + 1 <= self.pagecount else None

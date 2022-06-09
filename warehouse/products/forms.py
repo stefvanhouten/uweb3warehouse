@@ -61,7 +61,10 @@ class SupplierProduct(Form):
         rounding=decimal.ROUND_UP,
         places=2,
         description="The VAT percentage that we pay for the product.",
-        validators=[validators.InputRequired(), validators.NumberRange(min=0, max=100)],
+        validators=[
+            validators.InputRequired(),
+            validators.NumberRange(min=0, max=100),
+        ],
     )
     name = StringField(
         "name",
@@ -151,7 +154,10 @@ class ProductVatForm(Form):
         "vat",
         rounding=decimal.ROUND_UP,
         places=2,
-        validators=[validators.InputRequired(), validators.NumberRange(min=0, max=100)],
+        validators=[
+            validators.InputRequired(),
+            validators.NumberRange(min=0, max=100),
+        ],
         description="The vat percentage for this product",
     )
 

@@ -72,5 +72,7 @@ class SupplierForm(Form):
         description="The email address of the supplier.",
     )
     gscode = StringField(
-        "GSCode", [validators.Optional()], description="The GSCode of the supplier."
+        "GSCode",
+        [validators.Optional()],
+        description="The GSCode of the supplier.",
     )

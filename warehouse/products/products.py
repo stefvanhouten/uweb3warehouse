@@ -429,7 +429,10 @@ class PageMaker(basepages.PageMaker):
             product_vat_form = forms.ProductVatForm(data=product)
 
         if self.post and "vat" not in self.post and product_price_form.validate():
-            new_product_price = {"product": product["ID"], **product_price_form.data}
+            new_product_price = {
+                "product": product["ID"],
+                **product_price_form.data,
+            }
             model.Productprice.Create(self.connection, new_product_price)
             return self.req.Redirect(f"/product/{product['sku']}/prices", httpcode=301)
 
